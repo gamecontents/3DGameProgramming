@@ -8,6 +8,8 @@ public class GameMgr : MonoBehaviour {
     public Transform[] points;
     //몬스터 프리팹을 할당할 변수
     public GameObject monsterPrefab;
+    //몬스터를 미리 생성해 저장할 리스트 자료형
+    public List<GameObject> monsterPool = new List<GameObject>();
 
     //몬스터를 발생시킬 주기
     public float createTime = 2.0f;
@@ -27,7 +29,20 @@ public class GameMgr : MonoBehaviour {
     void Start () {
         // Hierarchy 뷰의 SpawnPoint를 찾아 하위에 있는 모든 Transform 컴포넌트를 찾아옴
         points = GameObject.Find("SpawnPoint").GetComponentsInChildren<Transform>();
-        
+
+        //몬스터를 생성해 오브젝트풀에 저장
+        for (int i = 0; i < maxMonster; i++)
+        {
+            //몬스터 프리팹을 생성
+            GameObject monster = (GameObject)Instantiate(monsterPrefab);
+            //생성한 몬스터의 이름 설정
+            monster.name = "Monster_" + i.ToString();
+            //생성한 몬스터를 비활성화
+            monster.SetActive(false);
+            //생성한 몬스터를 오브젝트 풀에 추가
+            monsterPool.Add(monster);
+        }
+
         if (points.Length > 0){
             //몬스터 생성 코루틴 함수 호출
             StartCoroutine(this.CreateMonster());
