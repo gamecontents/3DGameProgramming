@@ -163,9 +163,6 @@ public class MonsterCtrl : MonoBehaviour {
     //몬스터 사망 시 처리 루틴
     void MonsterDie()
     {
-        //사망한 몬스터의 태그를 Untagged로 변경
-        gameObject.tag = "Untagged";
-
         //모든 코루틴을 정지
         StopAllCoroutines();
 
