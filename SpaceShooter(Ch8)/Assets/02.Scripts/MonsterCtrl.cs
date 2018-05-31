@@ -33,7 +33,7 @@ public class MonsterCtrl : MonoBehaviour {
     private GameUI gameUI;
 
 
-    void Start()
+    void Awake()
     {
         //몬스터의 Transform 할당
         monsterTr = this.gameObject.GetComponent<Transform>();
@@ -43,23 +43,20 @@ public class MonsterCtrl : MonoBehaviour {
         nvAgent = this.gameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
         //Animator 컴포넌트 할당
         animator = this.gameObject.GetComponent<Animator>();
-
+        //GameUI 게임오브젝트의 GameUI 스크립트를 할당
         gameUI = GameObject.Find("GameUI").GetComponent<GameUI>();
-
-        //추적 대상의 위치를 설정하면 바로 추적 시작
-        //nvAgent.destination = playerTr.position;
-
-        //일정한 간격으로 몬스터의 행동 상태를 체크하는 코루틴 함수 실행
-        StartCoroutine(this.CheckMonsterState());
-
-        //몬스터의 상태에 따라 동작하는 루틴을 실행하는 코루틴 함수 실행
-        StartCoroutine(this.MonsterAction());
     }
 
     //이벤트 발생 시 수행할 함수 연결
     void OnEnable()
     {
         PlayerCtrl.OnPlayerDie += this.OnPlayerDie;
+
+        //일정한 간격으로 몬스터의 행동 상태를 체크하는 코루틴 함수 실행
+        StartCoroutine(this.CheckMonsterState());
+
+        //몬스터의 상태에 따라 동작하는 루틴을 실행하는 코루틴 함수 실행
+        StartCoroutine(this.MonsterAction());
     }
 
     //이벤트 발생 시 연결된 함수 해제
@@ -184,6 +181,31 @@ public class MonsterCtrl : MonoBehaviour {
         }
 
         gameUI.DispScore(50);
+
+        //몬스터 오브젝트 풀로 환원시키는 코루틴 함수 호출
+        StartCoroutine(this.PushObjectPool());
+    }
+
+    IEnumerator PushObjectPool()
+    {
+        yield return new WaitForSeconds(3.0f);
+
+        //각종 변수 초기화
+        isDie = false;
+        hp = 100;
+        gameObject.tag = "MONSTER";
+        monsterState = MonsterState.idle;
+
+        //몬스터에 추가된 Collider을 다시 활성화
+        gameObject.GetComponentInChildren<CapsuleCollider>().enabled = true;
+
+        foreach (Collider coll in gameObject.GetComponentsInChildren<SphereCollider>())
+        {
+            coll.enabled = true;
+        }
+
+        //몬스터를 비활성화
+        gameObject.SetActive(false);
     }
 
     void CreateBloodEffect(Vector3 pos)
