@@ -55,23 +55,27 @@ public class GameMgr : MonoBehaviour {
         //게임 종료 시까지 무한 루프
         while ( !isGameOver )
         {
-            //현재 생성된 몬스터 개수 산출
-            int monsterCount = (int)GameObject.FindGameObjectsWithTag("MONSTER").Length;
-
-            //몬스터의 최대 생성 개수보다 작을 때만 몬스터 생성
-            if (monsterCount < maxMonster)
+            //몬스터 생성주기 시간만큼 메인루프에 양보
+            yield return new WaitForSeconds(createTime);
+            
+            //플레이어가 사망했을때 코루틴을 종료해 다음 루틴을 진행하지 않음
+            if (isGameOver) yield break;
+            
+            //오브젝트 풀의 처음부터 끝까지 순회
+            foreach(GameObject monster in monsterPool)
             {
-                //몬스터의 생성주기 시간만큼 대기
-                yield return new WaitForSeconds(createTime);
-
-                //불규칙적인 위치 산출
-                int idx = Random.Range(1, points.Length);
-                //몬스터의 동적 생성
-                Instantiate(monsterPrefab, points[idx].position, points[idx].rotation);
-            }
-            else
-            {
-                yield return null;
+                //비활성화 여부로 사용 가능한 몬스터를 판단
+                if (!monster.activeSelf)
+                {
+                    //몬스터를 출현시킬 위치의 인덱스값을 추출
+                    int idx = Random.Range (1, points.Length);
+                    //몬스터의 출현위치를 설정
+                    monster.transform.position = points[idx].position;
+                    //몬스터 활성화시킴
+                    monster.SetActive(true);
+                    //오브젝트 풀에서 몬스터 프리팹 하나를 활성화한 후 for 루프를 빠져나감
+                    break;
+                }
             }
         }
     }
