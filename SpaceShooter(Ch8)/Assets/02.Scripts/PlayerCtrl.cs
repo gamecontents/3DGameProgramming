@@ -43,6 +43,9 @@ public class PlayerCtrl : MonoBehaviour
 
     public Image imgHpbar;
 
+    //게임매니저에 접근하기 위한 변수
+    private GameMgr gameMgr;
+
     //델리게이트 및 이벤트 선언
     public delegate void PlayerDieHandler();
     public static event PlayerDieHandler OnPlayerDie;
@@ -54,6 +57,8 @@ public class PlayerCtrl : MonoBehaviour
 
         //스크립트 처음에 Transform 컴포넌트 할당
         tr = GetComponent<Transform>();
+        //GameMgr 스크립트 할당
+        gameMgr = GameObject.Find("GameManager").GetComponent<GameMgr>();
 
         //자신의 하위에 있는 Animation 컴포넌트를 찾아와 변수에 할당
         _animation = GetComponentInChildren<Animation>();
@@ -117,7 +122,7 @@ public class PlayerCtrl : MonoBehaviour
 
             imgHpbar.fillAmount = (float)hp / (float)initHp;
 
-            Debug.Log("Player HP = " + hp.ToString());
+            //Debug.Log("Player HP = " + hp.ToString());
 
             //Player의 생명이 0이하 이면 사망 처리
             if (hp <= 0)
@@ -132,16 +137,9 @@ public class PlayerCtrl : MonoBehaviour
     {
         Debug.Log("Player Die !!");
 
-        //MONSTER Tag를 가진 모든 게임오브젝트를 찾아옴
-        //GameObject[] monsters = GameObject.FindGameObjectsWithTag("MONSTER");
-
-        //모든 몬스터의 OnPlayerDie 함수를 순차적으로 호출
-        //foreach (GameObject monster in monsters)
-        //{
-        //    monster.SendMessage("OnPlayerDie", SendMessageOptions.DontRequireReceiver);
-        //}
-
         //이벤트 발생시킴
         OnPlayerDie();
+        //게임매니저의 isGameOver 변수값을 변경해 몬스터 출현을 중지시킴
+        gameMgr.isGameOver = true;
     }
 }
