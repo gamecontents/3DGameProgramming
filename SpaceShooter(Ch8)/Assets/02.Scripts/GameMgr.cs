@@ -15,8 +15,15 @@ public class GameMgr : MonoBehaviour {
     public int maxMonster = 10;
     //게임 종료 여부 변수
     public bool isGameOver = false;
+    //싱글톤 패턴을 위한 인스턴스 변수선언
+    public static GameMgr instance = null;
 
-   
+    void Awake()
+    {
+        //GameMgr 클래스를 인스턴스에 대입
+        instance = this;
+    }
+
     void Start () {
         // Hierarchy 뷰의 SpawnPoint를 찾아 하위에 있는 모든 Transform 컴포넌트를 찾아옴
         points = GameObject.Find("SpawnPoint").GetComponentsInChildren<Transform>();

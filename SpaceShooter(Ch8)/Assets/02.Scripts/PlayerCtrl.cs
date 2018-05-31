@@ -140,6 +140,9 @@ public class PlayerCtrl : MonoBehaviour
         //이벤트 발생시킴
         OnPlayerDie();
         //게임매니저의 isGameOver 변수값을 변경해 몬스터 출현을 중지시킴
-        gameMgr.isGameOver = true;
+        //gameMgr.isGameOver = true;
+
+        //GameMgr의 싱글톤 인스턴스를 접근해 isGameOver변수값을 변경
+        GameMgr.instance.isGameOver = true;
     }
 }
