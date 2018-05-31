@@ -19,6 +19,10 @@ public class GameMgr : MonoBehaviour {
     public bool isGameOver = false;
     //싱글톤 패턴을 위한 인스턴스 변수선언
     public static GameMgr instance = null;
+    //사운드의 볼륨 설정 변수
+    public float sfxVolumn = 1.0f;
+    //사운드 뮤트 기능
+    public bool isSfxMute = false;
 
     void Awake()
     {
@@ -78,6 +82,32 @@ public class GameMgr : MonoBehaviour {
                 }
             }
         }
+    }
+
+    //사운드 공용함수
+    public void PlaySfx(Vector3 pos, AudioClip sfx)
+    {
+        //음소거 옵션이 설정되면 바로 빠져나감
+        if (isSfxMute) return;
+
+        //게임오브젝트를 동적으로 생성
+        GameObject soundObj = new GameObject("Sfx");
+        //사운드 발생 위치 지정
+        soundObj.transform.position = pos;
+
+        //생성한 게임오브젝트에 AudioSource 컴포넌트 추가
+        AudioSource audioSource = soundObj.AddComponent<AudioSource>();
+        //AudioSource 속성 설정
+        audioSource.clip = sfx;
+        audioSource.minDistance = 10.0f;
+        audioSource.maxDistance = 30.0f;
+        //sfxVolumn 변수로 게임의 전체적인 볼륨 설정 가능
+        audioSource.volume = sfxVolumn;
+        //사운드 실행
+        audioSource.Play();
+
+        //사운드의 플레이가 종료되면 동적으로 생성한 게임오브젝트를 삭제
+        Destroy(soundObj, sfx.length);
     }
 }
 

@@ -78,8 +78,8 @@ public class FireCtrl : MonoBehaviour
         CreateBullet();
 
         //사운드 발생 함수
-        source.PlayOneShot(fireSfx, 0.9f);
-        //GameMgr.instance.PlaySfx(firePos.position, fireSfx);
+        //source.PlayOneShot(fireSfx, 0.9f);
+        GameMgr.instance.PlaySfx(firePos.position, fireSfx);
 
         //잠시 기다리는 루틴을 위해 코루틴 함수로 호출
         StartCoroutine(this.ShowMuzzleFlash());
